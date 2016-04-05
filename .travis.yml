@@ -7,8 +7,6 @@ go:
 
 before_install:
   - go get github.com/nbio/st
-  - go get gopkg.in/h2non/apachelog.v0
-  - go get gopkg.in/eapache/go-resiliency.v1/retrier
   - go get -u -v github.com/axw/gocov/gocov
   - go get -u -v github.com/mattn/goveralls
   - go get -u -v github.com/golang/lint/golint

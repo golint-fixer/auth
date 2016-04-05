@@ -6,8 +6,8 @@ import (
 	"strings"
 )
 
-// Matchers represents the required header matcher function signature
-// implemented by matchers.
+// Matcher represents the required auth header matcher function
+// signature implemented by matchers.
 type Matcher func([]Token, Token) bool
 
 // BasicAuth represents the user-password pair used as helper struct.
@@ -98,11 +98,14 @@ func User(user, password string) *Handler {
 	return New(&Config{Tokens: tokens})
 }
 
-// Users creates a new auth handler.
-func Users(user, password string) *Handler {
-	token := Token{Type: "Basic", Value: user + ":" + password}
-	tokens := []Token{token}
-	return New(&Config{Tokens: tokens})
+// Tokens creates a new auth handler allowing the given token strings.
+// Tokens must be transported via Authorization header.
+func Tokens(tokens ...string) *Handler {
+	store := make([]Token, len(tokens))
+	for _, token := range tokens {
+		store = append(store, Token{Value: token})
+	}
+	return New(&Config{Tokens: store})
 }
 
 // MatchAuthHeader matches an authorization header againts the allowed tokens.

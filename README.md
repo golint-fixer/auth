@@ -45,7 +45,7 @@ func main() {
 }
 ```
 
-#### Custom config auth with allowing credentials
+#### Custom config allowing multiple credentials types
 
 ```go
 package main
@@ -61,14 +61,16 @@ const port = 3100
 func main() {
   // Create a new vinxi proxy
   vs := vinxi.NewServer(vinxi.ServerOptions{Port: port})
-  
-  // Attach the auth middleware 
-  users := []BasicAuth{
-    {"foo", "pas$w0rd"},
-    {"bar", "pas$w0rd"},
+
+  // Bind the auth middleware with custom config
+  // Any of the following credentials will be authorized
+  tokens := []auth.Token{
+    {Type: "Basic", Value: "foo:s3cr3t"},
+    {Type: "Bearer", Value: "s3cr3t"},
+    {Value: "s3cr3t token"},
   }
-  vs.Use(auth.Users(users))
-  
+  vs.Use(auth.New(&auth.Config{Tokens: tokens}))
+
   // Target server to forward
   vs.Forward("http://httpbin.org")
 
