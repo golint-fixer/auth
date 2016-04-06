@@ -93,8 +93,15 @@ func New(cfg *Config) *Handler {
 
 // User function is optional but handy, used to check input parameters when creating new middlewares
 func User(user, password string) *Handler {
-	token := Token{Type: "Basic", Value: user + ":" + password}
-	tokens := []Token{token}
+	return Users(BasicAuth{User: user, Password: password})
+}
+
+// Users creates a new auth middleware allowing access to the list of users.
+func Users(users ...BasicAuth) *Handler {
+	tokens := make([]Token, len(users))
+	for _, user := range users {
+		tokens = append(tokens, Token{Type: "Basic", Value: user.User + ":" + user.Password})
+	}
 	return New(&Config{Tokens: tokens})
 }
 

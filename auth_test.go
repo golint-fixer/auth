@@ -28,6 +28,44 @@ func TestAuthBasicHandler(t *testing.T) {
 	st.Reject(t, string(rw.Body), "Unauthorized")
 }
 
+func TestAuthUserConstruct(t *testing.T) {
+	auth := User("Aladdin", "open sesame")
+
+	var called bool
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		called = true
+	})
+
+	headers := make(http.Header)
+	headers.Set("Authorization", "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==")
+	req := &http.Request{Header: headers}
+	rw := utils.NewWriterStub()
+
+	auth.HandleHTTP(rw, req, handler)
+	st.Expect(t, called, true)
+	st.Expect(t, rw.Code, 200)
+	st.Reject(t, string(rw.Body), "Unauthorized")
+}
+
+func TestAuthUsersConstruct(t *testing.T) {
+	auth := Users(BasicAuth{User: "Aladdin", Password: "open sesame"})
+
+	var called bool
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		called = true
+	})
+
+	headers := make(http.Header)
+	headers.Set("Authorization", "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==")
+	req := &http.Request{Header: headers}
+	rw := utils.NewWriterStub()
+
+	auth.HandleHTTP(rw, req, handler)
+	st.Expect(t, called, true)
+	st.Expect(t, rw.Code, 200)
+	st.Reject(t, string(rw.Body), "Unauthorized")
+}
+
 func TestAuthTokenHash(t *testing.T) {
 	config := &Config{Tokens: []Token{{Type: "", Value: "s3cr3t"}}}
 	auth := New(config)
