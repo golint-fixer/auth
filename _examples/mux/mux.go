@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	"gopkg.in/vinxi/apachelog.v0"
 	"gopkg.in/vinxi/auth.v0"
-	"gopkg.in/vinxi/log.v0"
 	"gopkg.in/vinxi/mux.v0"
 	"gopkg.in/vinxi/vinxi.v0"
 )
@@ -14,8 +14,8 @@ func main() {
 	// Create a new vinxi proxy
 	vs := vinxi.NewServer(vinxi.ServerOptions{Port: port})
 
-	// Attach the log middleware
-	vs.Use(log.Default)
+	// Attach the apachelog middleware
+	vs.Use(apachelog.Default)
 
 	// Attach the auth middleware
 	vs.Use(mux.Path("/secret").Use(auth.User("foo", "bar")))
